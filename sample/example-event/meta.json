@@ -1,0 +1,32 @@
+{
+  "event_id": "example-event",
+  "title": "Example flood event (FAKE SAMPLE DATA)",
+  "location": "Sample region",
+  "bounds": [
+    [
+      37.15,
+      69.13
+    ],
+    [
+      39.99,
+      72.83
+    ]
+  ],
+  "before_date": "2026-10-30",
+  "after_date": "2026-11-11",
+  "satellite": "NISAR L2 GCOV, L-band",
+  "method": "log-ratio + Otsu threshold",
+  "flooded_area_km2": 6619.3,
+  "valid_area_km2": 101475.8,
+  "metrics": {
+    "iou": 0.71,
+    "f1": 0.83
+  },
+  "layers": {
+    "before": "before_hh.png",
+    "after": "after_hh.png",
+    "change": "change.png",
+    "flood": "flood_mask.png"
+  },
+  "notes": "Synthetic sample for dashboard development. Not real data."
+}
