@@ -14,27 +14,55 @@ How the six of us work in parallel without waiting on each other, and how the pi
 ## 1. The pipeline at a glance
 
 ```
- M1 data ──► M3 preprocessing ──► M4 detection ──► outputs/<event>/ ──► M5 dashboard
-   (.h5)       (dB arrays,          (flood mask,      (PNGs + meta.json)     (React map)
-               masks, aligned)       stats, ML)
-                                         ▲
- M2 event research + reference map ──────┘ (used to evaluate accuracy)
+ G1 data + event ──► AI1 preprocessing ──► AI2 baseline detection ──► AI3 ML + export ──► outputs/<event>/ ──► SW dashboard
+   (.h5, reference)    (dB arrays, masks,      (threshold mask,            (ML mask, PNGs,       (PNGs + meta.json)     (React map)
+                        aligned grids)          evaluation)                 run_pipeline.py)
 
- M6 glues it together: run_pipeline.py, merges PRs, tests, presentation
+ G2 research, testing and presentation ── works alongside everyone
 ```
 
 Each arrow is a **handoff**. As long as the handoff format is respected, each person can build and test their part on their own.
 
-## 2. Roles and what each person delivers
+## 2. Roles — pick yours
 
-| Member | Area | Owns these files | Delivers |
-|---|---|---|---|
-| **M1** | Data acquisition | `data/granules.txt`, `data/metadata/`, `scripts/download_data.py` | Before/after NISAR GCOV files, downloadable by anyone |
-| **M2** | Event & reference | `data/reference/`, `docs/research/` | Event details, reference flood/water map, cited sources |
-| **M3** | SAR preprocessing | `pipeline/io.py`, `pipeline/preprocess.py` | Aligned, masked dB arrays for both dates |
-| **M4** | Detection & ML | `pipeline/detect.py`, `pipeline/export.py` | Flood mask, affected area, accuracy vs. reference |
-| **M5** | Dashboard | `frontend/` | Working map with before/after, flood layer, stats |
-| **M6** | Integration & pitch | `scripts/run_pipeline.py`, `sample/`, `docs/`, merges | One-command pipeline, final demo, slides |
+There are six roles: three AI, one software and two general. **Nobody is assigned yet — each person picks the role they want.**
+
+**How to pick:**
+1. Read the roles below and choose the one that fits you best.
+2. Claim it in the team chat ("I'm taking AI2"). First come, first served.
+3. Write your name in the **Taken by** column (edit this file on GitHub, or ask SW to do it).
+4. If two people want the same role, talk it through; whoever doesn't get it picks from what's left.
+5. Not sure? Pick a **G** role. They need no heavy coding and matter just as much for the judging.
+
+| ID | Suggested background | Area | Owns these files | Delivers | Taken by |
+|---|---|---|---|---|---|
+| **AI1** | AI / data | SAR preprocessing | `pipeline/io.py`, `pipeline/preprocess.py` | Aligned, masked dB arrays for both dates; HDF5 inspection and alignment check | _open_ |
+| **AI2** | AI / data | Baseline detection & evaluation | `pipeline/detect.py` (baseline), `pipeline/evaluate.py` | Threshold flood mask, affected area, accuracy (IoU, F1) vs. reference | _open_ |
+| **AI3** | AI / ML | ML model & pipeline output | `pipeline/ml.py`, `pipeline/export.py`, `scripts/run_pipeline.py` | ML flood mask compared with baseline; outputs in contract format; one-command pipeline | _open_ |
+| **SW** | Software | Dashboard & repo | `frontend/`, `sample/`; reviews and merges PRs | Working map with before/after, flood layer, stats; `main` always runnable | _open_ |
+| **G1** | General | Data & event | `data/granules.txt`, `data/metadata/`, `data/reference/`, `docs/research/event.md` | Granules found in ASF Vertex and downloaded; event verified with sources; reference map | _open_ |
+| **G2** | General | Research, QA, testing & pitch | `docs/research/method.md`, `docs/phase1_report.md`, slides | Flood-detection science write-up; Phase 1 report; app testing; presentation and demo script | _open_ |
+
+**Why these roles:** the three AI members cover the three processing stages in order, so each has one clear input and one clear output. The software member owns everything the user sees and keeps `main` working. The two general members cover the work that needs no heavy coding but is just as important for judging: real data, a verified event, sound science and a clear pitch.
+
+### Pairs (who helps whom)
+
+- **G1 ↔ AI1:** G1 finds and downloads the data; AI1 confirms it opens and is usable. G1 documents the QA findings AI1 uncovers.
+- **G2 ↔ AI2:** G2 researches how radar sees water and what limits apply; AI2 turns that into the baseline method and evaluation.
+- **G2 ↔ SW:** G2 tests the dashboard as a first-time user and writes its explanatory text.
+- **AI3 ↔ SW:** AI3's `export.py` must produce exactly what the dashboard reads. Agree on `meta.json` in the first hour.
+
+### Phase 1 tasks → owners
+
+| Phase 1 task | Owner | Support |
+|---|---|---|
+| 1. Inspect HDF5 structure | AI1 | G1 |
+| 2. Investigate QA failure | AI1 | G1 writes it up |
+| 3. Visualize HH/HV previews | AI2 | — |
+| 4. Verify spatial alignment | AI1 | — |
+| 5. Flood-detection feasibility research | G2 | AI2 |
+| 6. Event & temporal coverage | G1 | G2 |
+| Phase 1 final report | G2 | everyone sends findings |
 
 Roles can shift depending on strengths. If you finish early, help the person whose output you depend on.
 
@@ -42,25 +70,27 @@ Roles can shift depending on strengths. If you finish early, help the person who
 
 ```
 data/
-  granules.txt          M1  NISAR granule names we use
-  metadata/             M1  XML + QA CSV files (small, committed)
-  reference/            M2  reference flood map / permanent-water mask
+  granules.txt          G1   NISAR granule names we use
+  metadata/             G1   XML + QA CSV files (small, committed)
+  reference/            G1   reference flood map / permanent-water mask
   raw/                  git-ignored — downloaded .h5 files live here
 pipeline/               Python package — the processing chain
-  io.py                 M3  read GCOV .h5 → numpy arrays + georeferencing
-  preprocess.py         M3  dB conversion, invalid-pixel masks, crop, alignment
-  detect.py             M4  baseline threshold + ML step
-  export.py             M4  write outputs in the contract format
+  io.py                 AI1  read GCOV .h5 → numpy arrays + georeferencing
+  preprocess.py         AI1  dB conversion, invalid-pixel masks, crop, alignment
+  detect.py             AI2  baseline threshold (log-ratio + Otsu)
+  evaluate.py           AI2  area statistics, IoU / F1 vs. reference
+  ml.py                 AI3  ML step (clustering / random forest)
+  export.py             AI3  write outputs in the contract format
 scripts/
-  download_data.py      M1  download granules from ASF (exists)
-  run_pipeline.py       M6  run the whole chain with one command
-frontend/               M5  React + Leaflet dashboard
-sample/                 M6  small fake outputs for frontend development
+  download_data.py      G1   download granules from ASF (exists)
+  run_pipeline.py       AI3  run the whole chain with one command
+frontend/               SW   React + Leaflet dashboard
+sample/                 SW   small fake outputs for frontend development
 docs/
   WORKFLOW.md           this file
   CONTRACT.md           exact output formats (summary in section 4)
-  phase1_report.md      Phase 1 findings
-  research/             M2  research notes and sources
+  phase1_report.md      G2   Phase 1 findings
+  research/             G1, G2  event research, method research, sources
 notebooks/              personal exploration: <name>_<topic>.ipynb
 outputs/                git-ignored — real pipeline results
 ```
@@ -69,7 +99,7 @@ Folders that don't exist yet get created by their owner in their first pull requ
 
 ## 4. The contract — how parts connect
 
-### 4.1 Preprocessing → Detection (M3 → M4)
+### 4.1 Preprocessing → Detection (AI1 → AI2, AI3)
 
 `pipeline/preprocess.py` exposes a function that returns, **for each date, on the same pixel grid**:
 
@@ -81,9 +111,9 @@ Folders that don't exist yet get created by their owner in their first pull requ
 | `transform`, `crs` | georeferencing | Same for both dates once aligned |
 | `date` | string `YYYY-MM-DD` | Acquisition date |
 
-M4 can start immediately using small synthetic arrays of this shape.
+AI2 and AI3 can start immediately using small synthetic arrays of this shape.
 
-### 4.2 Detection → Dashboard (M4 → M5)
+### 4.2 Detection → Dashboard (AI3 → SW)
 
 The pipeline writes one folder per event:
 
@@ -136,9 +166,9 @@ pip install -r requirements.txt
    git switch main
    git pull
    ```
-2. Create your branch, named `<member>/<topic>`:
+2. Create your branch, named `<your-id>/<topic>` (e.g. `ai1/preprocess`, `sw/map-view`, `g1/event-research`):
    ```bash
-   git switch -c m3/preprocess
+   git switch -c ai1/preprocess
    ```
 3. Work, then commit small, meaningful steps:
    ```bash
@@ -147,17 +177,19 @@ pip install -r requirements.txt
    ```
 4. Push and open a pull request into `main`:
    ```bash
-   git push -u origin m3/preprocess
+   git push -u origin ai1/preprocess
    ```
    Then open the PR on GitHub. Describe what it does and how you tested it.
-5. M6 (or another teammate) reviews and merges. Delete the branch after merging.
+5. SW reviews and merges (for SW's own PRs, any AI member reviews). Delete the branch after merging.
 6. If `main` moved while you worked, update your branch before the PR:
    ```bash
    git switch main
    git pull
-   git switch m3/preprocess
+   git switch ai1/preprocess
    git merge main
    ```
+
+**New to git?** (G1, G2) Docs and data files can also be added straight on GitHub: open the folder, click **Add file → Upload files** or edit a file with the pencil icon, choose **"Create a new branch… and start a pull request"**, and submit. SW will merge it.
 
 ### Rules
 
@@ -185,16 +217,18 @@ pip install -r requirements.txt
 
 | When | Milestone | Who |
 |---|---|---|
-| Before kickoff | Data downloaded, opens in Python; this workflow agreed | M1, M3, all |
-| Day 1, hour 1 | `sample/` outputs committed so M5 can start | M6 |
-| Day 1, hours 0–3 | Event confirmed, reference map found; granules verified | M1, M2 |
-| Day 1, hours 2–5 | Preprocessing returns aligned dB arrays | M3 |
-| Day 1, hours 5–8 | Baseline flood mask + area statistics | M4 |
+| Before kickoff | Data downloaded and opens in Python; this workflow agreed | G1, AI1, all |
+| Day 1, hour 1 | `sample/` outputs committed; `meta.json` agreed | SW, AI3 |
+| Day 1, hours 0–3 | Event confirmed, reference map found; Phase 1 checks done | G1, AI1, G2 |
+| Day 1, hours 0–3 | Dashboard skeleton runs on sample data | SW |
+| Day 1, hours 2–5 | Preprocessing returns aligned dB arrays | AI1 |
+| Day 1, hours 2–5 | ML approach chosen and prototyped on synthetic data | AI3 |
+| Day 1, hours 5–8 | Baseline flood mask + area statistics + evaluation | AI2 |
 | **End of Day 1** | **Sync:** first real `outputs/<event>/` produced end to end | All |
-| Day 2, hours 0–3 | Dashboard shows real outputs; ML step added | M4, M5 |
-| Day 2, hours 3–5 | Accuracy vs. reference in dashboard | M4, M5, M2 |
-| Day 2, hours 5–7 | Testing, fixes, polish; demo rehearsal | All, led by M6 |
-| Final hour | Presentation: problem, data, method, results, limitations, live demo | M6 + all |
+| Day 2, hours 0–3 | ML step on real data, compared with baseline; dashboard shows real outputs | AI3, AI2, SW |
+| Day 2, hours 3–5 | Accuracy vs. reference shown in dashboard; method text written | AI2, SW, G2 |
+| Day 2, hours 5–7 | Testing, fixes, polish; demo rehearsal | All, testing led by G2 |
+| Final hour | Presentation: problem, data, method, results, limitations, live demo | G2 presents with all |
 
 **Short stand-ups** at the start of each block: each person says what they finished, what they're doing next, and what they're blocked on (2 minutes each, max).
 
@@ -217,5 +251,5 @@ A part is done when:
 ## 11. Help and questions
 
 - Blocked for more than 20 minutes? Ask in the team chat. Don't wait silently.
-- Unsure where something belongs? Ask M6.
+- Unsure where something belongs or how to use git? Ask SW.
 - Found a data or security problem (e.g., a credential committed by mistake)? Tell the team immediately.
