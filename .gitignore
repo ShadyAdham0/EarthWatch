@@ -1,0 +1,35 @@
+# Large satellite data — never commit (GitHub rejects files > 100 MB)
+*.h5
+*.hdf5
+*.tif
+*.tiff
+*.zip
+data/raw/
+
+# Generated outputs (regenerate with scripts)
+outputs/
+
+# Secrets / credentials
+.env
+.env.*
+.netrc
+_netrc
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Node
+node_modules/
+dist/
+build/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
