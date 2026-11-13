@@ -124,8 +124,8 @@ outputs/<event_id>/
 ### First-time setup
 
 ```bash
-git clone https://github.com/ShadyAdham0/OrbitWatch.git
-cd OrbitWatch
+git clone https://github.com/ShadyAdham0/EarthWatch.git
+cd EarthWatch
 pip install -r requirements.txt
 ```
 
