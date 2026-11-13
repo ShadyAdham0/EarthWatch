@@ -1,4 +1,4 @@
-# OrbitWatch
+# EarthWatch
 
 NASA Space Apps Challenge 2026 — *Dancing with the SARs*. Surface-change and flood detection from NISAR L-band SAR (L2 GCOV).
 
