@@ -95,7 +95,7 @@ notebooks/              personal exploration: <name>_<topic>.ipynb
 outputs/                git-ignored — real pipeline results
 ```
 
-Folders that don't exist yet get created by their owner in their first pull request.
+`pipeline/` already contains stub functions with the agreed signatures (owners fill in the bodies), and `sample/example-event/` contains fake outputs so the dashboard can start right away. `frontend/` and `data/reference/` are created by their owners in their first pull request.
 
 ## 4. The contract — how parts connect
 
