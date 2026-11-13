@@ -1,0 +1,80 @@
+{
+  "pipeline_name": "EarthWatch Sentinel-1 SAR Preprocessing & Flood Detection",
+  "study_area": "Eastern Tajikistan (Darvoz / Pamir Mountain Valleys)",
+  "target_coordinates": {
+    "lat": 38.9,
+    "lon": 71.3
+  },
+  "crs": "EPSG:32642",
+  "pixel_spacing_m": 20.0,
+  "raster_dimensions": [
+    1000,
+    1000
+  ],
+  "pre_event_date": "2026-11-02",
+  "post_event_date": "2026-11-14",
+  "parameters": {
+    "study_area_name": "Eastern Tajikistan (Darvoz / Pamir Mountain Valleys)",
+    "target_lat": 38.9,
+    "target_lon": 71.3,
+    "target_crs": "EPSG:32642",
+    "pixel_spacing_m": 20.0,
+    "calibration_target": "Gamma0",
+    "nesz_vv_db": -24.0,
+    "nesz_vh_db": -26.0,
+    "apply_thermal_noise_subtraction": true,
+    "speckle_filter_type": "Enhanced Lee",
+    "speckle_window_size": 7,
+    "speckle_enl": 4.4,
+    "speckle_damping_factor": 1.0,
+    "dem_source": "Copernicus DEM 30m GLO-30 (ESA / EU Copernicus)",
+    "local_incidence_angle_model": "Projected Local Slope & Radar Aspect",
+    "min_valid_linear": 1e-06,
+    "clipping_min_db": -35.0,
+    "clipping_max_db": 5.0,
+    "shadow_slope_threshold_deg": 85.0,
+    "layover_slope_threshold_deg": 45.0,
+    "water_darkness_threshold_vv_db": -16.0,
+    "water_darkness_threshold_vh_db": -22.0,
+    "min_patch_size_pixels": 5,
+    "log_ratio_fallback_threshold_db": -3.0
+  },
+  "metrics": {
+    "valid_study_area_km2": 348.99,
+    "shadow_layover_area_km2": 51.01,
+    "preliminary_flood_area_km2": 17.52,
+    "flood_candidate_percent": 5.02,
+    "otsu_difference_threshold_db": -6.78,
+    "mean_difference_vv_db": 0.37,
+    "std_difference_vv_db": 2.97
+  },
+  "scientific_constraints": {
+    "data_integrity": "Original satellite files in 01_Raw_Data/ were accessed read-only; no modifications.",
+    "analytical_restraint": "The difference image indicates backscatter decrease candidates, NOT verified floods.",
+    "reproducibility": "All parameters, DEM sources, and filter formulas are documented and persisted."
+  },
+  "exported_files": {
+    "geotiffs": [
+      "difference_VH_dB.tif",
+      "difference_VV_dB.tif",
+      "post_event_VH_gamma0_dB.tif",
+      "post_event_VV_gamma0_dB.tif",
+      "preliminary_flood_candidates.tif",
+      "pre_event_VH_gamma0_dB.tif",
+      "pre_event_VV_gamma0_dB.tif",
+      "shadow_layover_mask.tif",
+      "valid_data_mask.tif"
+    ],
+    "visualizations": [
+      "01_pre_event_VV.png",
+      "02_post_event_VV.png",
+      "03_pre_event_VH.png",
+      "04_post_event_VH.png",
+      "05_before_after_comparison.png",
+      "06_preliminary_difference_map.png",
+      "07_flood_candidates_overlay.png",
+      "08_full_pipeline_summary.png"
+    ],
+    "datacube_netcdf": "sentinel1_processed_datacube.nc"
+  }
+}

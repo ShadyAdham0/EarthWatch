@@ -4,7 +4,9 @@
 *.tif
 *.tiff
 *.zip
+*.nc
 data/raw/
+Phase_2/01_Raw_Data/
 
 # Generated outputs (regenerate with scripts)
 outputs/

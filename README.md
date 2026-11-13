@@ -67,6 +67,34 @@ git switch -c <your-id>/<topic>      # e.g. ai1/preprocess, sw/map-view
 
 Then follow your role's first steps below, and the git workflow in [docs/WORKFLOW.md § 5](docs/WORKFLOW.md#5-git-workflow).
 
+## Running the Pipelines
+
+### Phase 2: Sentinel-1 SAR Pipeline (Eastern Tajikistan)
+Implements radiometric calibration (Gamma0 RTC), Enhanced Lee speckle filtering, Copernicus 30m DEM terrain correction, dB scaling, spatial alignment, and mountain shadow/layover masking:
+
+```bash
+python scripts/run_phase2_pipeline.py
+```
+
+Outputs are automatically generated in:
+- Processed GeoTIFFs & xarray NetCDF datacube: `Phase_2/04_Processed_Data/`
+- Visualizations & change maps: `Phase_2/05_Visualizations/`
+
+### Phase 1/2: NISAR L-band SAR Pipeline
+Full-scene processing (io → preprocess → baseline & ML detection → evaluate → dashboard export):
+
+```bash
+python scripts/run_pipeline.py --event tajikistan-baseline --step 10
+```
+
+Outputs matching `docs/CONTRACT.md` are saved to `outputs/tajikistan-baseline/`.
+
+### Running Unit Tests
+
+```bash
+python -m unittest tests/test_pipeline.py -v
+```
+
 ## First steps per role
 
 | Role | Start here |
