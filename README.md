@@ -55,6 +55,8 @@ data/raw/<files from the zip>.h5
 
 `data/raw/` is git-ignored, so nothing you put there gets committed. **Never commit `.h5` files.**
 
+> ⚠️ In the current `Nasa.zip` the two `.h5` files are in swapped folders. After extracting, move `…20261030T….h5` into `oct30/` and `…20261111T….h5` into `nov11/`.
+
 Once the granule names are filled in [`data/granules.txt`](data/granules.txt), you can instead download straight from NASA — see [Downloading from ASF](#downloading-from-asf).
 
 ### 5. Start working
