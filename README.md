@@ -2,6 +2,8 @@
 
 NASA Space Apps Challenge 2026 — *Dancing with the SARs*. Surface-change and flood detection from NISAR L-band SAR (L2 GCOV).
 
+**Team: read [docs/WORKFLOW.md](docs/WORKFLOW.md) first** — roles, repo structure, file contract and git workflow.
+
 ## Data
 
 The NISAR `.h5` files are several GB each, so they are **not stored in git** (`.gitignore` blocks `*.h5`). The repo only records which granules we use, in [`data/granules.txt`](data/granules.txt). Small files (XML metadata, QA CSVs) can be committed under `data/metadata/`.
