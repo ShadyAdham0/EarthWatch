@@ -1,0 +1,7 @@
+# NISAR L2 GCOV granules used by OrbitWatch.
+# One granule name per line (exactly as shown in ASF Vertex, without file extension).
+# Lines starting with # are ignored. Use "label | granule_name" to tag a granule.
+#
+# TODO: replace the placeholders below with the real granule names.
+# oct30 | NISAR_L2_PR_GCOV_..._20261030T..._...
+# nov11 | NISAR_L2_PR_GCOV_..._20261111T002344_...
