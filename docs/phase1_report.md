@@ -166,13 +166,39 @@ Note: the bounding coordinates in the original task brief differ by about 0.01°
 | What do our images show at that point? | 10 × 10 km box: median change −0.04 dB, 0.2% dark pixels on both dates. **No water signal**, as expected for pre-event images. | Confirmed |
 | Are the two images useful? | Yes: a **12-day pre-event baseline** showing how much the surface changes with no flood, which gives the false-alarm rate. | — |
 
-**Supporting evidence options:**
-- **Sentinel-1 (C-band)**, about 6–12 day revisit, available on the same ASF site.
-- **Sentinel-2 optical**, but November cloud and snow are likely.
+### 5.1 Post-event data: Sentinel-1 (team decision)
+
+The team chose Sentinel-1 for post-event data. ASF search over 38.9°N 71.3°E (Oct 20 – Nov 13, IW GRD) returned five Sentinel-1D scenes and **none after Nov 12 yet**:
+
+| Date (UTC) | Orbit | Path / frame | Pol | Granule |
+|---|---|---|---|---|
+| 2026-10-21 13:13 | Ascending | 173 / 122 | VV+VH | `S1D_IW_GRDH_1SDV_20261021T131353_20261021T131418_005114_009AF3_24B0` |
+| 2026-10-22 01:13 | Descending | 5 / 461 | VV+VH | `S1D_IW_GRDH_1SDV_20261022T011319_20261022T011344_005121_009B3F_D72C` |
+| 2026-11-02 13:13 | Ascending | 173 / 122 | VV+VH | `S1D_IW_GRDH_1SDV_20261102T131353_20261102T131418_005289_00A0F4_1AAD` |
+| 2026-11-03 01:13 | Descending | 5 / 461 | VV+VH | `S1D_IW_GRDH_1SDV_20261103T011318_20261103T011343_005296_00A13C_3715` |
+| 2026-11-08 01:21 | Descending | 78 / 462 | VV+VH | `S1D_IW_GRDH_1SDV_20261108T012135_20261108T012200_005369_00A3CC_CFE2` |
+
+**Expected next passes** (12-day repeat, not yet confirmed):
+
+| Expected date | Orbit | Path | Pre-event pair (same geometry) |
+|---|---|---|---|
+| **2026-11-14 ~13:13** | Ascending | 173 | 2026-11-02 |
+| **2026-11-15 ~01:13** | Descending | 5 | 2026-11-03 |
+| 2026-11-20 ~01:21 | Descending | 78 | 2026-11-08 |
+
+**Plan:**
+1. Watch ASF Vertex for the **Nov 14** path 173 scene (usually listed within hours to a day).
+2. Compare it with **Nov 2** (same path, before the incident). Nov 15 / Nov 3 on path 5 is the backup pair.
+3. Process both with **ASF HyP3 RTC** (free, Earthdata login) to get terrain-corrected GeoTIFFs. Raw GRD is not terrain-corrected, which matters in mountains.
+4. Use VV as the main water channel for Sentinel-1 (it has no HH).
+
+**Limitations:** Sentinel-1 is C-band, so results are not directly comparable in dB with NISAR L-band. Treat it as a separate, supporting before/after pair. Nov 2 is also before the Nov 4–6 mudslide warning, so changes from that event will mix in.
+
+Sentinel-2 optical is a weaker option: November cloud and snow are likely.
 
 ## 6. Issues found in the delivered files
 
-1. **The `.h5` files are in swapped folders in `Nasa.zip`.** The Oct 30 `.h5` is in `nov11/` and the Nov 11 `.h5` is in `oct30/`. The XML and CSV files are in the correct folders. Always identify files by the date in the **file name**, not the folder.
+1. **The `.h5` files are in swapped folders in `Nasa.zip`.** The Oct 30 `.h5` is in `nov11/` and the Nov 11 `.h5` is in `oct30/`, confirmed from the acquisition time stored inside each file (`zeroDopplerStartTime`). The XML and CSV files are in the correct folders. **Fix after extracting:** move each `.h5` into the folder matching the date in its name (`…20261030T…` → `oct30/`, `…20261111T…` → `nov11/`). The zip on Drive should also be re-uploaded with the files swapped. The scripts identify files by name, so their results are unaffected.
 2. The task brief didn't list Oct 30's acquisition time. It's 00:23:44–00:24:19 UTC, the same as Nov 11.
 
 ## 7. What we still need
@@ -181,7 +207,7 @@ Note: the bounding coordinates in the original task brief differ by about 0.01°
 |---|---|---|
 | Shadow / layover mask (NISAR static layers, or computed from DEM) | Shadow looks like water in mountains | AI1 + G1 |
 | Full QA log for both granules | Confirm the identification failure cause | G1 |
-| A post-event image: NISAR around Nov 23, or Sentinel-1 after Nov 12 | Without it, no flood can be detected | G1 |
+| Sentinel-1 post-event scene: Nov 14 path 173 (pair with Nov 2), or Nov 15 path 5 (pair with Nov 3), processed with HyP3 RTC | Without it, no flood can be detected | G1 |
 | Independent confirmation of the Nov 12 incident | Don't build the story on an unverified event | G1 + G2 |
 | Reference water map (e.g., JRC Global Surface Water) | Separate permanent water from new water, and evaluate accuracy | G1 |
 | A demo-safe event with a known flood (e.g., Assam, July 2026) | Fallback if no post-event Tajikistan data exists in time | Team decision |
